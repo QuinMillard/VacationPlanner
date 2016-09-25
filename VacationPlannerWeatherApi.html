@@ -9,14 +9,14 @@
     -->
 
 <head>
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/jquery-3.1.1.js"></script>
 
     <script type="text/javascript">
         // Configure our weather widget during jQuery.OnReady
         $(function () {
             var isMetric = true;
             var locationUrl = "";
-            var currentConditionsUrl = "";
+            var fiveDayForcast = "";
             // Visit http://apidev.accuweather.com/developers/languages for a list of supported languages
             var language = "en";
             // Contact AccuWeather to get an official key. They key in this
@@ -71,12 +71,16 @@
             };
             // Gets current conditions for the location.
             // For more info about Current Conditions API go to http://apidev.accuweather.com/developers/locations
+            // reference url: 
+http://{{api} or {{apidev}}.accuweather.com/forecasts/{version}/daily/5day/{locationKey}{.{format}}?apikey={your key}{&language={language code}}{&details={true or false}}{&metric={true or false}}
+
+
             var awxGetCurrentConditions = function (locationKey) {
-                currentConditionsUrl = "http://apidev.accuweather.com/currentconditions/v1/" + 
-                    locationKey + ".json?language=" + language + "&apikey=" + apiKey;
+                fiveDayForcast = "http://apidev.accuweather.com/currentconditions/v1//daily/5day/" + 
+                    locationKey + ".json?apikey=" + apiKey + "&language=" + language + "&details = false &metric" = isMetric;
                 $.ajax({
                     type: "GET",
-                    url: currentConditionsUrl,
+                    url: fiveDayForcast,
                     dataType: "jsonp",
                     cache: true,                    // Use cache for better reponse times
                     jsonpCallback: "awxCallback",   // Prevent unique callback name for better reponse times
@@ -91,7 +95,7 @@
                                 html = "N/A";
                             }
                         $("#awxWeatherInfo").html(html);
-                        $("#awxWeatherUrl").html("<a href=" + currentConditionsUrl + ">" + currentConditionsUrl + "</a>");
+                        $("#awxWeatherUrl").html("<a href=" + fiveDayForcast + ">" + fiveDayForcast + "</a>");
                     }
                 });
             };
@@ -117,10 +121,10 @@
     <p></p>
 
     <div>
-        <input id="awxSearchButton" type="submit" value="gerate local forecast" />
+        <input id="awxSearchButton" type="submit" value="Quin why does this button not do anything" />
     </div>
 
-    <h3>Current Conditions</h3>
+    <h3>Current tempurature</h3>
     <ul>
         <li>URL: <span id="awxWeatherUrl"/>N/A
         <li><span id="awxWeatherInfo">(Current conditions will be displayed here)</span>
