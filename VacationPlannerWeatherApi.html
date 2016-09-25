@@ -1,133 +1,106 @@
 <!DOCTYPE <!DOCTYPE html>
 <html>
 
-<!--
-    This page shows how to search for a location (by free text) and 
-    retrieve the current conditions for the location.
-    For more information visit: http://api.accuweather.com/developers/
-    ** Remember that you need to obtain your own API key by contacting AccuWeather. **
-    -->
+<style>
+
+body{
+        background: url('rainforestbs.jpg');
+        no-repeat center center fixed;
+        background-size:cover;
+    }
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    transform: translate(50%, 50%);
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+</style>
+
+
 
 <head>
-    <script src="http://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 
     <script type="text/javascript">
-        // Configure our weather widget during jQuery.OnReady
-        $(function () {
-            var isMetric = true;
-            var locationUrl = "";
-            var fiveDayForcast = "";
-            // Visit http://apidev.accuweather.com/developers/languages for a list of supported languages
-            var language = "en";
-            // Contact AccuWeather to get an official key. They key in this
-            // example is temporary and should NOT be used it in production.
-            var apiKey = "hackuweather2016";   
-            var awxClearMessages = function() {
-                $("#awxLocationInfo").html("...");
-                $("#awxLocationUrl").html("...");
-                $("#awxWeatherInfo").html("...");
-                $("#awxWeatherUrl").html("...");
-            }
-            // Searches for a city with the name specified in freeText.
-            // freeText can be something like:
-            //          new york
-            //          new york, ny
-            //          paris
-            //          paris, france
-            // For more info about location API go to http://apidev.accuweather.com/developers/locations
-            var awxCityLookUp = function (freeText) {
-                awxClearMessages();
-                locationUrl = "http://apidev.accuweather.com/locations/v1/search?q=" + freeText + "&apikey=" + apiKey;
-                $.ajax({
-                    type: "GET",
-                    url: locationUrl,
-                    dataType: "jsonp",
-                    cache: true,                    // Use cache for better reponse times
-                    jsonpCallback: "awxCallback",   // Prevent unique callback name for better reponse times
-                    success: function (data) { awxCityLookUpFound(data); }
-                });
-            };
-            // Displays what location(s) were found.
-            var awxCityLookUpFound = function (data) {
-                var msg, locationKey = null;
-                $("#awxLocationUrl").html("<a href=" + encodeURI(locationUrl) + ">" + locationUrl + "</a>");
-                if (data.length == 1) {
-                    locationKey = data[0].Key;
-                    msg = "One location found: <b>" + data[0].LocalizedName + "</b>. Key: " + locationKey;
-                }
-                else if(data.length == 0) {
-                    msg = "No locations found."
-                }
-                else {
-                    locationKey = data[0].Key;
-                    msg = "Multiple locations found (" + data.length + "). Selecting the first one: " + 
-                        "<b>" + data[0].LocalizedName + ", " + data[0].Country.ID + "</b>. Key: " + locationKey;
-                }
-                $("#awxLocationInfo").html(msg);
-                if(locationKey != null) {
-                    awxGetCurrentConditions(locationKey);
-                }
-                    
-            };
-            // Gets current conditions for the location.
-            // For more info about Current Conditions API go to http://apidev.accuweather.com/developers/locations
-            // reference url: 
-http://{{api} or {{apidev}}.accuweather.com/forecasts/{version}/daily/5day/{locationKey}{.{format}}?apikey={your key}{&language={language code}}{&details={true or false}}{&metric={true or false}}
+        
+       
+    var isMetric = true;
+    var locationUrl = "";
+    var fiveDayForcast = "";
+    // Visit http://apidev.accuweather.com/developers/languages for a list of supported languages
+    var language = "en";
+    // Contact AccuWeather to get an official key. They key in this
+    // example is temporary and should NOT be used it in production.
+    var apiKey = "hackuweather2016";  
+    var weather = "";
 
+    $.getJSON("http://apidev.accuweather.com/forecasts/v1/daily/5day/55488.json?apikey=hackuweather2016&language=en&details=false&metric=true", function(weatherData){
+        var day1 =  weatherData.DailyForecasts[0].Date;
+        var day2 =  weatherData.DailyForecasts[1].Date;
+        var day3 =  weatherData.DailyForecasts[2].Date;
+        var day4 =  weatherData.DailyForecasts[3].Date;
+        var day5 =  weatherData.DailyForecasts[4].Date;
+        weather = weatherData.DailyForecasts[1].Day.IconPhrase;
+        console.log(weather);
+        document.getElementById("day1").innerHTML = day1;
+        document.getElementById("day2").innerHTML = day2;
+        document.getElementById("day3").innerHTML = day3;
+        document.getElementById("day4").innerHTML = day4;
+        document.getElementById("day5").innerHTML = day5;
+    });
 
-            var awxGetCurrentConditions = function (locationKey) {
-                fiveDayForcast = "http://apidev.accuweather.com/currentconditions/v1//daily/5day/" + 
-                    locationKey + ".json?apikey=" + apiKey + "&language=" + language + "&details = false &metric" = isMetric;
-                $.ajax({
-                    type: "GET",
-                    url: fiveDayForcast,
-                    dataType: "jsonp",
-                    cache: true,                    // Use cache for better reponse times
-                    jsonpCallback: "awxCallback",   // Prevent unique callback name for better reponse times
-                    success: function (data) {
-                            var html;
-                            if(data && data.length > 0) {
-                                var conditions = data[0];
-                                html = conditions.Date + ", " + conditions.tempurature + " " + temp.Unit;
-                            }
-                            else {
-                                html = "N/A";
-                            }
-                        $("#awxWeatherInfo").html(html);
-                        $("#awxWeatherUrl").html("<a href=" + fiveDayForcast + ">" + fiveDayForcast + "</a>");
-                    }
-                });
-            };
-            $("#awxSearchTextBox").keypress(function (e) {
-                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-                    var text = $("#awxSearchTextBox").val();
-                    awxCityLookUp(text);
-                    return false;
-                } else {
-                    return true;
-                }
-            });
-            $("#awxSearchButton").click(function () {
-                var text = "toronto"//$("#awxSearchTextBox").val();
-                awxCityLookUp(text);
-            });
-        });
     </script>
 </head>
-
+<a ></a>
 <body>
-    <h2>Current Conditions</h2>
-    <p></p>
-
-    <div>
-        <input id="awxSearchButton" type="submit" value="Quin why does this button not do anything" />
+    <div class="dropdown">
+      <button class="dropbtn">Which Day Would You Like?</button>
+      <div class="dropdown-content">
+        <a href="#" id="day1"></a>
+        <a href="VacationPlanner" id="day2" onclick="location.href=this.href+''+weather + 'Plan.html';return false;"></a>
+        <a href="#" id="day3"></a>
+        <a href="#" id="day4"></a>
+        <a href="#" id="day5"></a>
+      </div>
     </div>
-
-    <h3>Current tempurature</h3>
-    <ul>
-        <li>URL: <span id="awxWeatherUrl"/>N/A
-        <li><span id="awxWeatherInfo">(Current conditions will be displayed here)</span>
-    </ul>
 </body>
 
 </html>
