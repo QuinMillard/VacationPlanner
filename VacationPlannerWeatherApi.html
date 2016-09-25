@@ -88,8 +88,7 @@ http://{{api} or {{apidev}}.accuweather.com/forecasts/{version}/daily/5day/{loca
                             var html;
                             if(data && data.length > 0) {
                                 var conditions = data[0];
-                                var temp = isMetric ? conditions.Temperature.Metric : conditions.Temperature.Imperial;
-                                html = conditions.WeatherText + ", " + temp.Value + " " + temp.Unit;
+                                html = conditions.Date + ", " + conditions.tempurature + " " + temp.Unit;
                             }
                             else {
                                 html = "N/A";
